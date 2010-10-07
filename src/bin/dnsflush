@@ -1,0 +1,5 @@
+#! /bin/bash
+
+# Flushes the Mac DNS cache.
+
+dscacheutil -flushcache
