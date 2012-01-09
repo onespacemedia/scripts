@@ -1,2 +1,0 @@
-#! /bin/bash
-java -jar ~/Workspace/scripts/src/bin/yuicompressor.jar --type css --charset utf-8

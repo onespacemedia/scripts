@@ -3,3 +3,4 @@
 # Flushes the Mac DNS cache.
 
 dscacheutil -flushcache
+sudo dscacheutil -flushcache
