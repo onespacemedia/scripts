@@ -1,0 +1,17 @@
+#!/usr/bin/env python
+import os.path, sys, subprocess
+
+
+def main():
+    local_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "bin-webfaction")) + "/"
+    server_name = sys.argv[1]
+    remote_root = "{server_name}@{server_name}.webfactional.com:~/bin/".format(server_name=server_name)
+    command = 'rsync -rh --progress "{local_root}" "{remote_root}"'.format(
+        local_root = local_root,
+        remote_root = remote_root,
+    )
+    subprocess.call(command, shell=True)
+    
+    
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,4 @@
+#! /bin/bash
+
+export PYTHONPATH=$HOME/webapps/$1/lib/python2.7
+easy_install-2.7 --install-dir=$HOME/webapps/$1/lib/python2.7 --script-dir=$HOME/webapps/$1/bin $2
