@@ -1,0 +1,25 @@
+#! /bin/bash
+
+cd $HOME/webapps/$1/lib
+
+# Install libs.
+git clone $HOME/repos/$1
+git clone git://github.com/etianen/cms.git
+git clone git://github.com/etianen/django-reversion.git
+git clone git://github.com/etianen/django-watson.git
+git clone git://github.com/etianen/django-optimizations.git
+git clone git://github.com/etianen/django-usertools.git
+git clone git://github.com/etianen/django-historylinks.git
+
+# Link libs.
+cd python2.7
+ln -s ../$1/$1
+ln -s ../cms/src/cms
+ln -s ../django-reversion/src/reversion
+ln -s ../django-watson/src/watson
+ln -s ../django-optimizations/src/optimizations
+ln -s ../django-usertools/src/usertools
+ln -s ../django-historylinks/src/historylinks
+
+# Back to project home.
+cd ../$1
