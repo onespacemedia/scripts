@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+cd "$1" 
+echo "Running 'git pull' for `pwd`"
+
+git pull
