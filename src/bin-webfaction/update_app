@@ -4,5 +4,6 @@ cd ~/webapps/$1/lib
 find . -maxdepth 2 -name "*.git" -type d -exec gitpull "{}/../" ";"
 ~/webapps/$1/lib/$1/manage.py collectstatic -l --noinput
 ~/webapps/$1/lib/$1/manage.py compileassets
+~/webapps/$1/lib/$1/manage.py syncdb
 ~/webapps/$1/lib/$1/manage.py migrate
 ~/webapps/$1/apache2/bin/restart
