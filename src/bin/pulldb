@@ -1,8 +1,12 @@
 #! /bin/bash
 
-echo "pg_dump -cOx > ~/$1.sql" | ssh $1@$1.webfactional.com 'bash'
-scp $1@$1.webfactional.com:~/$1.sql ~/Downloads/$1.sql
-dropdb $1
-createdb $1
-psql $1 < ~/Downloads/$1.sql
-rm ~/Downloads/$1.sql
+SERVER=$1
+REMOTE_DB=${2:-$SERVER}
+LOCAL_DB=${3:-$REMOTE_DB}
+
+echo "pg_dump $REMOTE_DB -cOx -U $REMOTE_DB > ~/$REMOTE_DB.sql" | ssh $SERVER@$SERVER.webfactional.com 'bash'
+scp $SERVER@$SERVER.webfactional.com:~/$REMOTE_DB.sql ~/Downloads/$LOCAL_DB.sql
+dropdb $LOCAL_DB
+createdb $LOCAL_DB
+psql $LOCAL_DB < ~/Downloads/$LOCAL_DB.sql
+rm ~/Downloads/$LOCAL_DB.sql
