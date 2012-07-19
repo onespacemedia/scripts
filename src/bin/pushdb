@@ -1,6 +1,10 @@
 #! /bin/bash
 
-pg_dump -cOx $2 > ~/Desktop/$2.sql
-scp ~/Desktop/$2.sql $1@$1.webfactional.com:~/$2.sql
-echo "webapps/$2/lib/$2/manage.py dbshell < ~/$2.sql" | ssh $1@$1.webfactional.com 'bash'
-rm ~/Desktop/$2.sql
+SERVER=$1
+REMOTE_DB=${2:-$SERVER}
+LOCAL_DB=${3:-$REMOTE_DB}
+
+pg_dump -cOx $LOCAL_DB > ~/Desktop/$LOCAL_DB.sql
+scp ~/Desktop/$LOCAL_DB.sql $SERVER@$SERVER.webfactional.com:~/$REMOTE_DB.sql
+echo "psql $REMOTE_DB -U $REMOTE_DB < ~/$REMOTE_DB.sql" | ssh $SERVER@$SERVER.webfactional.com 'bash'
+rm ~/Desktop/$LOCAL_DB.sql
