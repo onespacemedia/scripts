@@ -21,5 +21,8 @@ ln -s ../django-optimizations/src/optimizations
 ln -s ../django-usertools/src/usertools
 ln -s ../django-historylinks/src/historylinks
 
+# Install 3rd party libs.
+really_easy_install $1 south
+
 # Back to project home.
 cd ../$1
