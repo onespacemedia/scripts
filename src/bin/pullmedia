@@ -1,3 +1,7 @@
 #! /bin/bash
 
-rsync -rh --progress $1@$1.webfactional.com:~/webapps/$1_media/uploads/ ~/Sites/$1/media/uploads/
+SERVER=$1
+REMOTE_APP=${2:-$SERVER}
+LOCAL_APP=${3:-$REMOTE_DB}
+
+rsync -rh --progress $SERVER@$SERVER.webfactional.com:~/webapps/${REMOTE_APP}_media/uploads/ ~/Sites/${LOCAL_APP}/media/uploads/
