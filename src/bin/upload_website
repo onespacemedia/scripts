@@ -1,0 +1,173 @@
+#!/usr/bin/env python2.7
+
+"""
+THIS FILE IS NOT COMPLETE
+       DO NOT USE
+"""
+
+
+import xmlrpclib
+import urllib
+import os
+
+
+# First we need to ask for the username and password of the Webfaction account.
+username = raw_input("Webfaction Username: ")
+password = raw_input("Webfaction Password: ")
+project = raw_input("Local Django app name: (what you use to import modules x.apps) ")
+folder = raw_input("Local base folder name: (what it is in ~/Workspace) ")
+domain = raw_input("Main website domain: (without www.) ")
+
+# Attempt to login
+server = xmlrpclib.ServerProxy('https://api.webfaction.com/')
+
+session_id, account = server.login(username, password)
+
+# Remove the default application if it exists.
+
+print "Deleting default Django application.."
+try:
+    server.delete_app(session_id, 'django')
+except:
+    print "Wasn't anything to delete, moving on.."
+
+# Django 1.4.3: django143_mw34_27
+# Static only: static_only (+ expires max as param for media)
+
+print "Creating new applications.."
+
+print "Creating the Django application.."
+try:
+    server.create_app(session_id, project, 'django143_mw34_27', False)
+except:
+    print "Seems it's already there, moving on.."
+
+print "Creating the static application.."
+try:
+    server.create_app(session_id, project + '_static', 'static_only', False)
+except:
+    print "Seems it's already there, moving on.."
+
+print "Creating the media application.."
+try:
+    server.create_app(session_id, project + '_media', 'static_only', False, 'expires max')
+except:
+    print "Seems it's already there, moving on.."
+
+# By default, Webfaction doesn't include a www. subdomain on the staging .webfactional.com domain, so make it.
+print "Adding domain.."
+try:
+    server.create_domain(session_id, username + '.webfactional.com', 'www')
+except:
+    print "Seems it's already there, moving on.."
+
+# Make the 'website' and attach all of the domains and apps.
+print "Deleting the default website.."
+try:
+    server.delete_website(session_id, "www")
+except:
+    print "Wasn't anything to delete, moving on.."
+
+print "Attaching websites to domains.."
+try:
+    server.create_website(session_id,
+                          username,
+                          '',
+                          False,
+                          [
+                            'www.{}.webfactional.com'.format(username),
+                            '{}.webfactional.com'.format(username),
+                            'www.{}'.format(domain),
+                            '{}'.format(domain)
+                          ],
+                          (project, '/'),
+                          ('{}_static'.format(project), '/static'),
+                          ('{}_media'.format(project), '/media')
+                          )
+except:
+    print "Seems it's already done, moving on.."
+
+# Create the database.
+print "Creating the database.."
+db_pass = urllib.urlopen('https://www.random.org/strings/?num=1&len=8&digits=on&loweralpha=on&unique=on&format=plain&rnd=new').read().rstrip()
+
+try:
+    server.create_db(session_id, username, 'postgresql', db_pass)
+except:
+    print "Seems it's already there, but now I don't know the password - this is an issue."
+    raw_input("Press enter to continue...")
+
+print "Updating the email password.."
+server.change_mailbox_password(session_id, username, password)
+
+
+print '''
+--------------------------------------
+Time to update settings/production.py!
+--------------------------------------
+
+Database password: {}
+STATIC_ROOT = "{}/{}/webapps/{}_static"
+MEDIA_ROOT = "{}/{}/webapps/{}_media"
+
+EMAIL_HOST = "smtp.webfaction.com"
+
+EMAIL_HOST_USER = "{}"
+
+EMAIL_HOST_PASSWORD = "{}"
+
+EMAIL_PORT = 587
+
+EMAIL_USE_TLS = True
+'''.format(
+    db_pass,
+    account.get('home', '/home'),
+    username,
+    project,
+    account.get('home', '/home'),
+    username,
+    project,
+    username,
+    password
+)
+
+raw_input("Press enter to continue...")
+
+print "Adding local public key to server.. (you may need to enter 'yes' then {} here)".format(password)
+os.system("cat ~/.ssh/id_rsa.pub | ssh -l {username} {username}.webfactional.com 'mkdir .ssh && touch ~/.ssh/authorized_keys && cat >> ~/.ssh/authorized_keys && chmod 755 ~/.ssh && chmod 600 ~/.ssh/authorized_keys && exit'".format(username=username))
+
+print "Adding .pgpass file to server.."
+os.system("echo 'localhost:5432:{username}:{username}:{password}' | ssh -l {username} {username}.webfactional.com 'cat > ~/.pgpass && chmod 600 ~/.pgpass && exit'".format(username=username, password=db_pass))
+
+print "Creating a Git repo on the server.."
+os.system("ssh -l {username} {username}.webfactional.com 'mkdir ~/repos && git init ~/repos/{username} --bare'".format(username=username))
+
+print "Adding a .gitignore to ~/settings"
+os.system("echo '/local.py' > {project}/settings/.gitignore".format(project=project))
+
+print "Adding the remote repo to the local Git repo.."
+os.system("git remote add origin {username}@{username}.webfactional.com:~/repos/{username}".format(username=username))
+os.system("git add .")
+os.system("git commit -m 'Initial files.' -a")
+os.system("git push origin master")
+
+print "Pushing the database live.."
+os.system("pushdb {username} {username} {project}".format(username=username, project=project))
+
+print "Pushing the media files live.."
+os.system("pushmedia {username} {project} {project}".format(username=username, project=project))
+
+print "Bootstrapping the server.."
+os.system("bootstrap_webfaction {username}".format(username=username))
+
+print "Installing the CMS on the server.."
+os.system("ssh -l {username} {username}.webfactional.com '~/bin/install_cms {project} && exit'".format(username=username, project=project))
+os.system("ssh -l {username} {username}.webfactional.com '~/bin/really_easy_install {project} south && exit'".format(username=username, project=project))
+
+print "Fixing the Apache conf.."
+os.system("ssh -l {username} {username}.webfactional.com \"sed -i 's/\/home\/{username}\/webapps\/{project}\/myproject\/myproject\/wsgi.py/\/home\/{username}\/webapps\/{project}\/lib\/{project}\/{project}\/wsgi.py/g' ~/webapps/{project}/apache2/conf/httpd.conf\"".format(project=project, username=username))
+
+print "Restarting Apache.."
+os.system("ssh -l {username} {username}.webfactional.com '~/webapps/{project}/apache2/bin/restart && exit'".format(username=username, project=project))
+
+print "I think that's it..! http://{username}.webfactional.com/".format(username=username)
