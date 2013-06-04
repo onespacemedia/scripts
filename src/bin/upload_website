@@ -1,11 +1,4 @@
 #!/usr/bin/env python2.7
-
-"""
-THIS FILE IS NOT COMPLETE
-       DO NOT USE
-"""
-
-
 import xmlrpclib
 import urllib
 import os
