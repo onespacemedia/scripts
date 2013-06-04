@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
+
+APP_NAME=$1
+PACKAGE_NAME=${2:-$APP_NAME}
  
-cd ~/webapps/$1/lib
+cd ~/webapps/$APP_NAME/lib
 find . -maxdepth 2 -name "*.git" -type d -exec gitpull "{}/../" ";"
-~/webapps/$1/lib/$1/manage.py collectstatic -l --noinput
-~/webapps/$1/lib/$1/manage.py compileassets
-~/webapps/$1/lib/$1/manage.py syncdb
-~/webapps/$1/lib/$1/manage.py migrate
-~/webapps/$1/apache2/bin/restart
+~/webapps/$APP_NAME/lib/$PACKAGE_NAME/manage.py collectstatic -l --noinput
+~/webapps/$APP_NAME/lib/$PACKAGE_NAME/manage.py compileassets
+~/webapps/$APP_NAME/lib/$PACKAGE_NAME/manage.py syncdb
+~/webapps/$APP_NAME/lib/$PACKAGE_NAME/manage.py migrate
+~/webapps/$APP_NAME/apache2/bin/restart

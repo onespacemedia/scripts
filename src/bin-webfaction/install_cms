@@ -4,7 +4,7 @@ cd $HOME/webapps/$1/lib
 
 # Install libs.
 git clone $HOME/repos/$1
-git clone git://github.com/etianen/cms.git
+git clone git://github.com/onespacemedia/cms.git
 git clone git://github.com/etianen/django-reversion.git
 git clone git://github.com/etianen/django-watson.git
 git clone git://github.com/etianen/django-optimizations.git
