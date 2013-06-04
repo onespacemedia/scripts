@@ -5,7 +5,7 @@ APPLICATION_NAME=${3:-$WEBFACTION_ACCOUNT}
 FOLDER_NAME=${3:-$APPLICATION_NAME}
 
 git add .
-git commit -m "$COMMIT_MESSAGE" -a
+git commit -am "$COMMIT_MESSAGE"
 git push
 
 if [ $2 ]; then
