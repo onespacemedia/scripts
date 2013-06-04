@@ -1,6 +1,0 @@
-#! /bin/bash
-find . -name *.css -exec touch "{}" \;
-find . -name *.js -exec touch "{}" \;
-find . -name *.png -exec touch "{}" \;
-find . -name *.jpg -exec touch "{}" \;
-find . -name *.jpeg -exec touch "{}" \;

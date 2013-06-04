@@ -5,3 +5,4 @@ REMOTE_APP=${2:-$SERVER}
 LOCAL_APP=${3:-$REMOTE_APP}
 
 rsync -rh --progress ~/Sites/${LOCAL_APP}/media/uploads/ $SERVER@$SERVER.webfactional.com:~/webapps/${REMOTE_APP}_media/uploads/
+# rsync -rh --progress ~/Sites/${LOCAL_APP}/media/assets/ $SERVER@$SERVER.webfactional.com:~/webapps/${REMOTE_APP}_media/assets/

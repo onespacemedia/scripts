@@ -1,5 +1,0 @@
-#! /bin/bash
-
-# Touches all CSS files in this directory downwards, essentially busting the browser's CSS cache.
-
-find . -name *.css -exec touch "{}" \;

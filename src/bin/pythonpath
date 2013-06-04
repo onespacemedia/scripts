@@ -1,6 +1,0 @@
-#! /bin/bash
-
-# Adds the current working directory to the PYTHONPATH.
-# Usage: `source pythonpath`
-
-export PYTHONPATH="`pwd`:${PYTHONPATH}"
