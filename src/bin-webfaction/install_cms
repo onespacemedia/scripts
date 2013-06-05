@@ -22,5 +22,5 @@ ln -s ../django-usertools/src/usertools
 ln -s ../django-historylinks/src/historylinks
 
 # Install 3rd party libs.
-./really_easy_install $1 south
-./really_easy_install $1 django-suit
+$HOME/bin/really_easy_install $1 south
+$HOME/bin/really_easy_install $1 django-suit
