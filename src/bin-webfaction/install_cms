@@ -23,6 +23,4 @@ ln -s ../django-historylinks/src/historylinks
 
 # Install 3rd party libs.
 really_easy_install $1 south
-
-# Back to project home.
-cd ../$1
+really_easy_install $1 django-suit
