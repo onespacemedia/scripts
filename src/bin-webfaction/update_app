@@ -2,9 +2,9 @@
 
 APP_NAME=$1
 PACKAGE_NAME=${2:-$APP_NAME}
- 
+
 cd ~/webapps/$APP_NAME/lib
-find . -maxdepth 2 -name "*.git" -type d -exec gitpull "{}/../" ";"
+find . -maxdepth 2 -name "*.git" -type d -exec $HOME/bin/gitpull "{}/../" ";"
 ~/webapps/$APP_NAME/lib/$PACKAGE_NAME/manage.py collectstatic -l --noinput
 ~/webapps/$APP_NAME/lib/$PACKAGE_NAME/manage.py compileassets
 ~/webapps/$APP_NAME/lib/$PACKAGE_NAME/manage.py syncdb

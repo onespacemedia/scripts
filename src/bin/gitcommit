@@ -6,8 +6,11 @@ FOLDER_NAME=${3:-$APPLICATION_NAME}
 
 git add .
 git commit -am "$COMMIT_MESSAGE"
-git push
 
-if [ $2 ]; then
-    echo "update_app $FOLDER_NAME; exit" | ssh -tt $WEBFACTION_ACCOUNT@$WEBFACTION_ACCOUNT.webfactional.com
+if [ $? == 0 ]; then
+    git push
+
+    if [ $2 ]; then
+        echo "update_app $FOLDER_NAME; exit" | ssh -tt $WEBFACTION_ACCOUNT@$WEBFACTION_ACCOUNT.webfactional.com
+    fi
 fi
