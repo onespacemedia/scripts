@@ -2,7 +2,7 @@
 COMMIT_MESSAGE=$1
 WEBFACTION_ACCOUNT=$2
 APPLICATION_NAME=${3:-$WEBFACTION_ACCOUNT}
-FOLDER_NAME=${3:-$APPLICATION_NAME}
+FOLDER_NAME=${4:-$APPLICATION_NAME}
 
 git add .
 git commit -am "$COMMIT_MESSAGE"
@@ -11,6 +11,6 @@ if [ $? == 0 ]; then
     git push
 
     if [ $2 ]; then
-        echo "update_app $FOLDER_NAME; exit" | ssh -tt $WEBFACTION_ACCOUNT@$WEBFACTION_ACCOUNT.webfactional.com
+        echo "update_app $APPLICATION_NAME $FOLDER_NAME; exit" | ssh -tt $WEBFACTION_ACCOUNT@$WEBFACTION_ACCOUNT.webfactional.com
     fi
 fi
