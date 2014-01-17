@@ -1,0 +1,10 @@
+#! /bin/bash
+
+SERVER=$1
+REMOTE_DB=${2:-$SERVER}
+LOCAL_DB=${3:-$REMOTE_DB}
+LOCAL_FILE=~/Downloads/$LOCAL_DB-`date +"%Y-%m-%d-%H:%M:%S"`.sql
+
+echo "pg_dump $REMOTE_DB -cOx -U $REMOTE_DB > ~/$REMOTE_DB.sql" | ssh $SERVER@$SERVER.webfactional.com 'bash'
+scp $SERVER@$SERVER.webfactional.com:~/$REMOTE_DB.sql $LOCAL_FILE
+echo "Saved to $LOCAL_FILE"
